@@ -34,8 +34,7 @@ int height = 1000;
 rootPolygon.add(0, 0);
 rootPolygon.add(width, 0);
 rootPolygon.add(width, height);
-rootPolygon.add(0, height);
-		
+rootPolygon.add(0, height);		
 		
 // create 100 points (sites) and set random positions in the rectangle defined above.
 	for (int i = 0; i < 100; i++) {
