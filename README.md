@@ -18,7 +18,8 @@ The following article contains most important references related to this impleme
 
 Usage
 -------------
-<pre lang="java"><code>
+
+```java
 PowerDiagram diagram = new PowerDiagram();
 
 // normal list based on an array
@@ -57,7 +58,7 @@ diagram.computeDiagram();
 			Site site=sites.array[i];
 			PolygonSimple polygon=site.getPolygon();
 		}
-</code></pre>
+```
 
 License
 ------------------------
