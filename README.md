@@ -21,41 +21,39 @@ Usage
 <pre lang="java"><code>
 PowerDiagram diagram = new PowerDiagram();
 
-* Arlind Nocaj, Ulrik Brandes, "Computing Voronoi Treemaps: Faster, Simpler, and Resolution-independent", Computer Graphics Forum, vol. 31, no. 3, June 2012, pp. 855-864
-		//normal list based on an array
-		OpenList sites = new OpenList();
+// normal list based on an array
+OpenList sites = new OpenList();
 
-		Random rand = new Random(100);
-			//  create a root polygon which limits the voronoi diagram.
-		//  here it is just a rectangle.
+Random rand = new Random(100);
+// create a root polygon which limits the voronoi diagram.
+//  here it is just a rectangle.
 		 
-		PolygonSimple rootPolygon = new PolygonSimple();
-		int width = 1000;
-		int height = 1000;
-		rootPolygon.add(0, 0);
-		rootPolygon.add(width, 0);
-		rootPolygon.add(width, height);
-		rootPolygon.add(0, height);
+PolygonSimple rootPolygon = new PolygonSimple();
+int width = 1000;
+int height = 1000;
+rootPolygon.add(0, 0);
+rootPolygon.add(width, 0);
+rootPolygon.add(width, height);
+rootPolygon.add(0, height);
 		
 		
-		// create 100 points (sites) and set random positions in the rectangle defined above.
-		for (int i = 0; i < 100; i++) {
-			Site site = new Site(rand.nextInt(width), rand.nextInt(width));
-			// we could also set a different weighting to some sites
-			// site.setWeight(30)
-			sites.add(site);
+// create 100 points (sites) and set random positions in the rectangle defined above.
+	for (int i = 0; i < 100; i++) {
+		Site site = new Site(rand.nextInt(width), rand.nextInt(width));
+		// we could also set a different weighting to some sites
+		// site.setWeight(30)
+		sites.add(site);
 		}
 		
-		// set the list of points (sites), necessary for the power diagram
-		diagram.setSites(sites);
-		// set the clipping polygon, which limits the power voronoi diagram
-		diagram.setClipPoly(rootPolygon);
+// set the list of points (sites), necessary for the power diagram
+diagram.setSites(sites);
+// set the clipping polygon, which limits the power voronoi diagram
+diagram.setClipPoly(rootPolygon);
 		
-		// do the computation
-		diagram.computeDiagram();
-		
-		// for each site we can no get the resulting polygon of its cell. 
-		// note that the cell can also be empty, in this case there is no polygon for the corresponding site.
+// do the computation
+diagram.computeDiagram();	
+// for each site we can no get the resulting polygon of its cell. 
+// note that the cell can also be empty, in this case there is no polygon for the corresponding site.
 		for (int i=0;i<sites.size;i++){
 			Site site=sites.array[i];
 			PolygonSimple polygon=site.getPolygon();
