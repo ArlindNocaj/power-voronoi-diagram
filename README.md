@@ -73,6 +73,6 @@ For distributors of proprietary software, other licensing is possible on request
 Citation
 -----------------
 
-This work is based on the publication below, please cite on usage, e.g.,  when publishing an article.
+This work is based on the publication below, please cite on usage.
 
 * Arlind Nocaj, Ulrik Brandes, "Computing Voronoi Treemaps: Faster, Simpler, and Resolution-independent", Computer Graphics Forum, vol. 31, no. 3, June 2012, pp. 855-864
