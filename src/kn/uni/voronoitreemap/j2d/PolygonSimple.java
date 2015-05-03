@@ -170,6 +170,9 @@ public class PolygonSimple implements Shape, Cloneable {
 	public boolean contains(double x, double y, double w, double h) {
 		if (bounds == null)
 			getBounds2D();
+		
+		if(w==0 && h==0) return contains(x, y);
+		
 		if (bounds.contains(x, y, w, h)) {
 			if (contains(x, y) && contains(x + w, y) && contains(x, y + h)
 					&& contains(x + w, y + h))
