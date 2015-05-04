@@ -124,9 +124,12 @@ public class PowerDiagram {
 			int size = sites.size;
 			for (int z = 0; z < size; z++) {
 				Site s = array[z];
-				if (Double.isNaN(s.getWeight()))
+				if (Double.isNaN(s.getWeight())){
+			
+//					s.setWeight(0.001);
 					throw new RuntimeException(
 							"Weight of a Site may not be NaN.");
+				}
 				hull.addPoint(s);
 			}
 
@@ -230,22 +233,21 @@ public class PowerDiagram {
 								poly.add(x1, y1);
 								lastX = x1;
 								lastY = y1;
-
 							}
 
 						}
 						site.nonClippedPolyon = poly;
 
 						if (!site.isDummy) {
-							try {
+//							try {
 								site.setPolygon(clipPoly.convexClip(poly));
 
-							} catch (Exception ex) {
-
-								ex.printStackTrace();
-
-								// TODO fallback for nonconvex clipping
-							}
+//							} catch (Exception ex) {
+//
+//								ex.printStackTrace();
+//								
+//								// TODO fallback for nonconvex clipping
+//							}
 						}
 
 					}
@@ -297,7 +299,7 @@ public class PowerDiagram {
 	}
 
 	public static void initDebug() {
-		if (graphics == null) {
+//		if (graphics == null) {
 			BufferedImage image = new BufferedImage(2000, 2000,
 					BufferedImage.TYPE_INT_RGB);
 
@@ -306,7 +308,7 @@ public class PowerDiagram {
 			frame.setBounds(20, 20, 1600, 800);
 			graphics = image.createGraphics();
 			graphics.translate(200, 200);
-		}
+//		}
 	}
 
 	public static void main(String[] args) {

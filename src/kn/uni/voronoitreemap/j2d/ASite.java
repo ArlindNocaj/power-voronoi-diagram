@@ -24,7 +24,6 @@ import kn.uni.voronoitreemap.extension.VoroCellObject;
 /**
  * A site is a 2 dimensional point which has a weight.
  * 
- * 
  * @author Arlind Nocaj
  *
  */
@@ -42,6 +41,7 @@ protected double weight=nearlyZero;
   * Preflow Extrapolation
   */
  public Point2D preflowVector=new Point2D();
+private ArrayList<Site> oldNeighbors;
  
  /**
   * 
@@ -81,6 +81,7 @@ public void setPolygon(PolygonSimple poly){
  * @see j2d.iSite#setNeighbours(java.util.ArrayList)
  */
 public void setNeighbours(ArrayList<Site> list){
+	this.setOldNeighbors(neighbours);
 	 neighbours=list;
  }
  
@@ -131,7 +132,7 @@ public double getWeight(){
  */
 public void setWeight(double weight){
 	this.weight=weight;
-	z=projectZ(getX(), getY(), weight);
+	project();
  }
  
  /* (non-Javadoc)
@@ -189,7 +190,7 @@ public int compareTo(Site b) {
 public void paint(Graphics2D g){
 	
 	int radius = (int)Math.sqrt(this.getWeight());
-	g.fillOval((int)this.getX()-radius, (int)this.getY()-radius, 2*radius, 2*radius);
+//	g.fillOval((int)this.getX()-radius, (int)this.getY()-radius, 2*radius, 2*radius);
 	g.setColor(Colors.circleBorder);
 	g.drawOval((int)this.getX()-radius, (int)this.getY()-radius, 2*radius, 2*radius);
 	g.setColor(Color.yellow);
@@ -197,6 +198,9 @@ public void paint(Graphics2D g){
 	g.fillRect((int)this.getX()-width, (int)this.getY()-width, 2*width,2*width );
 	
 }
+
+
+
 /* (non-Javadoc)
  * @see j2d.iSite#setPercentage(double)
  */
@@ -234,6 +238,16 @@ public double distanceCircles(Site point){
 	double radius1 = Math.sqrt(weight);
 	double radius2=Math.sqrt(point.weight);
 	return Math.sqrt(dx*dx+dy*dy)-radius1-radius2;
+}
+
+
+public ArrayList<Site> getOldNeighbors() {
+	return oldNeighbors;
+}
+
+
+private void setOldNeighbors(ArrayList<Site> oldNeighbors) {
+	this.oldNeighbors = oldNeighbors;
 }
 
 

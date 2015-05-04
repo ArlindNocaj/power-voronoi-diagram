@@ -12,6 +12,11 @@
  ******************************************************************************/
 package kn.uni.voronoitreemap.j2d;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+
+import kn.uni.voronoitreemap.debuge.Colors;
+
 /**
  * Extended Version of a site, which has relative Positions
  * @author Arlind Nocaj
@@ -26,6 +31,7 @@ public class Site extends ASite {
 	 */
 	public boolean isDummy;
 	private Object data;
+	private double lastIncrease;
 	
 	/**
 	  * 
@@ -34,6 +40,10 @@ public class Site extends ASite {
 	  */
 	 public Site(double x, double y){
 		super(x,y);
+	 }
+	 
+	 public Object getData(){
+		 return data;
 	 }
 	 
 	 /**
@@ -50,6 +60,15 @@ public class Site extends ASite {
 		 super(x,y,weight,percentage); 
 	 }
 	 
+	 public Site clone(){
+		 Site site=new Site(x, y, weight);
+		 site.isDummy=this.isDummy;
+		 site.originalObject=this.originalObject;
+		 site.percentage=this.percentage;
+		 
+		 
+			return site;
+	 }
 	 public Site cloneZeroWeight(){
 			Site site=new Site(x, y, 0);
 			return site;
@@ -66,5 +85,32 @@ public class Site extends ASite {
 
 	public void setData(Object child) {
 		this.data=child;
+	}
+
+	public void setLastIncrease(double increase) {
+		this.lastIncrease=increase;
+	}
+
+	public void paintLastIncrease(Graphics2D g, double radSize){
+		
+		
+		int radius = (int) ((lastIncrease-1)*radSize);
+		
+		if(radius>=0)
+		g.setColor(new Color(0,0,128,128));
+		else g.setColor(new Color(0,255,0,128));
+		radius=Math.abs(radius);
+		radius=Math.min((int)radSize, radius);
+		g.fillOval((int)this.getX()-radius, (int)this.getY()-radius, 2*radius, 2*radius);		
+		g.setColor(Color.BLUE);
+		g.drawOval((int)this.getX()-radius, (int)this.getY()-radius, 2*radius, 2*radius);
+		g.setColor(Color.black);
+		int width=1;
+		g.fillRect((int)this.getX()-width, (int)this.getY()-width, 2*width,2*width );
+		
+	}
+	
+	public double getLastIncrease() {
+		return lastIncrease;
 	}
 }

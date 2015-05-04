@@ -17,9 +17,9 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
-
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Random;
 
 import kn.uni.voronoitreemap.convexClip.ConvexClip;
@@ -33,7 +33,7 @@ import kn.uni.voronoitreemap.helper.Geometry;
  * @author Arlind Nocaj
  *
  */
-public class PolygonSimple implements Shape, Cloneable {
+public class PolygonSimple implements Shape, Cloneable, Iterable<Point2D>{
 
 	/** 
 	 * Used for generation of a random point in a polygon.
@@ -107,6 +107,8 @@ public class PolygonSimple implements Shape, Cloneable {
 		this.length = length;
 	}
 	
+	
+	
 	/**
 	 * Replaces the pointers of the coordinate arrays to show to the given coordinate arrays.
 	 */
@@ -170,9 +172,6 @@ public class PolygonSimple implements Shape, Cloneable {
 	public boolean contains(double x, double y, double w, double h) {
 		if (bounds == null)
 			getBounds2D();
-		
-		if(w==0 && h==0) return contains(x, y);
-		
 		if (bounds.contains(x, y, w, h)) {
 			if (contains(x, y) && contains(x + w, y) && contains(x, y + h)
 					&& contains(x + w, y + h))
@@ -184,6 +183,7 @@ public class PolygonSimple implements Shape, Cloneable {
 
 	@Override
 	public Rectangle2D getBounds2D() {
+		bounds=null;
 		if (bounds == null) {
 			getBounds();
 		}
@@ -337,6 +337,7 @@ public class PolygonSimple implements Shape, Cloneable {
 	 * Returns the bounding rectangle of this polygon.
 	 */
 	public Rectangle getBounds() {
+		bounds=null;
 		if (bounds == null) {
 			double xmin = Double.MAX_VALUE;
 			double ymin = Double.MAX_VALUE;
@@ -398,6 +399,7 @@ public class PolygonSimple implements Shape, Cloneable {
 			x[i] = x[i] * scalingFactor;
 			y[i] = y[i] * scalingFactor;
 		}
+		clearCacheOnly();
 	}
 
 	/**
@@ -406,10 +408,20 @@ public class PolygonSimple implements Shape, Cloneable {
 	 * @param ty translation on y
 	 */
 	public void translate(double tx, double ty) {
+		
 		for (int i = 0; i < length; i++) {
 			x[i] = x[i] + tx;
 			y[i] = y[i] + ty;
 		}
+		clearCacheOnly();
+	}
+
+	public void clearCacheOnly() {
+		this.centroid=null;
+		this.bounds=null;
+		this.area=-1;
+		if(this.oldPolygon!=null)
+			oldPolygon.clearCacheOnly();
 	}
 
 	/**
@@ -428,11 +440,15 @@ public class PolygonSimple implements Shape, Cloneable {
 	 * @return
 	 */
 	public PolygonSimple convexClip(PolygonSimple poly) {
+		//bounding box have to match for intersection
 		if (!this.getBounds2D().intersects(poly.getBounds2D()))
 			return null;
+		//check if bounding box corners are in polygon: then poly is contained completely inside the outer polygon
 		if (this.contains(poly.getBounds2D()))
-			return poly;
+			return poly;		
 
+		//bounding boxes intersect 
+	
 		// to vertexList
 		cVertexList list1 = this.getVertexList();
 		cVertexList list2 = poly.getVertexList();
@@ -465,10 +481,30 @@ public class PolygonSimple implements Shape, Cloneable {
 
 			}
 			return res;
-		} else {
+		} 
+		//no intersection between the two polygons, so check if one is inside the other
+		if(contains(poly.x[0],poly.y[0]))
 			return poly;
-		}
+		
+		// no intersection between the polygons at all
+		return null;
+	}
 
+	/**
+	 * Debugging only
+	 * @param poly
+	 */
+	private Point2D containsPoly(PolygonSimple poly) {
+		boolean inside=true;
+			for(Point2D p:poly){
+				if(!this.contains(p)){
+					System.out.println(p);
+					inside=false;
+					return p;
+					
+				}
+			}
+			return null;
 	}
 
 	private cVertexList getVertexList() {
@@ -538,8 +574,8 @@ public class PolygonSimple implements Shape, Cloneable {
 				xv += (x[i] + x[(i + 1) % length]) * temp;
 				yv += (y[i] + y[(i + 1) % length]) * temp;
 			}
-			xv = Math.abs(xv / areaQuotient);
-			yv = Math.abs(yv / areaQuotient);
+			xv = xv / areaQuotient;
+			yv = yv / areaQuotient;
 			this.centroid = new Point2D(xv, yv);
 		}
 
@@ -745,9 +781,9 @@ public class PolygonSimple implements Shape, Cloneable {
 		double x = -1;
 		double y = -1;
 		do {
-			x = b.getMinX() + seed.nextInt(b.width);
+			x = b.getMinX() + seed.nextDouble()*b.width;
 
-			y = b.getMinY() + seed.nextInt(b.height);
+			y = b.getMinY() + seed.nextDouble()*b.height;
 		} while (!this.contains(x, y));
 
 		return new Point2D(x, y);
@@ -938,7 +974,48 @@ public class PolygonSimple implements Shape, Cloneable {
 		return oldPolygon;
 	}
 
+	@Override
+	public Iterator<Point2D> iterator() {
+		return new Iterator<Point2D>() {
+			int i=0;
+			@Override
+			public boolean hasNext() {
+			return i<length;
+			}
+
+			@Override
+			public Point2D next() {
+				Point2D p = new Point2D(x[i],y[i]);
+				i++;				
+				return p; 
+			}
+
+			@Override
+			public void remove() {
+				
+			}
+			
+			
+		};
+	}
 	
+	
+
+	public int[] getXpointsClosed(){
+		return getPointsClosed(x);
+	}
+	
+	public int[] getYpointsClosed(){
+		return getPointsClosed(y);
+	}
+	
+	private int[] getPointsClosed(double[] values){		
+		int[] x=new int[length+1];
+		for (int i = 0; i < length; i++) 
+			x[i]=(int)values[i];		
+		x[length]=x[0];
+		return x;
+	}
 
 	
 }

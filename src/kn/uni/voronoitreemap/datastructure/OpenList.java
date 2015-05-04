@@ -13,9 +13,12 @@
 package kn.uni.voronoitreemap.datastructure;
 
 
+import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Random;
 
+import kn.uni.voronoitreemap.j2d.PolygonSimple;
 import kn.uni.voronoitreemap.j2d.Site;
 
 
@@ -25,7 +28,7 @@ import kn.uni.voronoitreemap.j2d.Site;
  *
  * @param <E> type of Elements
  */
-public class OpenList{
+public class OpenList implements Iterable<Site>{
 
 	public Site[] array;
 	public int size=0;
@@ -101,6 +104,17 @@ public class OpenList{
 		
 	}
 	
+	public OpenList clone()  {
+		OpenList neu=new OpenList(size+1);
+		neu.size=size;
+		for (int i=0;i<size;i++){
+			Site s=array[i];
+			neu.array[i]=s.clone();
+		}
+		return neu;
+		
+	}
+	
 	public void permutate(){
 		
 		for(int i = 0; i < size; ++i){
@@ -109,6 +123,59 @@ public class OpenList{
 			array[ra]=array[i];
 			array[i]=temp;
 		}
+	}
+	
+	
+	@Override
+	public Iterator<Site> iterator() {
+		return new Iterator<Site>() {
+			
+			int i=0;
+			@Override
+			public boolean hasNext() {
+			return i<size;			
+			}
+
+			@Override
+			public Site next() {				
+				return array[i++];				
+			}
+
+			@Override
+			public void remove() {
+				
+			}
+		};
+	}
+	
+	public PolygonSimple getBoundsPolygon(double offset){
+		if(offset<0) return null;
+		
+		Rectangle2D rect = getBounds();
+		
+		double x=rect.getMinX();
+		double y=rect.getMinY();
+		double w=rect.getWidth();
+		double h=rect.getHeight();
+		x-=offset;
+		y-=offset;
+		w+=offset;
+		h+=offset;
+		
+		PolygonSimple poly=new PolygonSimple(4);
+		poly.add(x,y);
+		poly.add(x+w,y);
+		poly.add(x+w,y+h);
+		poly.add(x,y+h);
+			return poly;
+	}
+	
+	public Rectangle2D getBounds(){
+		PolygonSimple simple=new PolygonSimple(this.size);
+		for(Site s:this)
+			simple.add(s.x,s.y);
+		
+		return simple.getBounds2D();		
 	}
 
 }
