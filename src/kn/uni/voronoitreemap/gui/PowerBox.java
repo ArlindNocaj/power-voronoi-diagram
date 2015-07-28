@@ -87,9 +87,8 @@ public class PowerBox extends JFrame {
 //					vertices = diagram.getVertices();
 					//lines = diagram.getLines();
 				}	
-					PowerBox.powerBox.computeDiagram();
-				repaint();
-				resize(getSize());
+			    PowerBox.powerBox.computeDiagram();
+				setPreferredSize(getSize());
 				repaint();
 			}
 		});
@@ -105,10 +104,10 @@ public class PowerBox extends JFrame {
 		for(JSite component:points){
 			
 			component.setPolygon(component.getSite().getPolygon());
-		}
+		}		
+		setPreferredSize(getSize());
+		pack();	
 		repaint();
-		resize(getSize());
-		
 	}
 
 	/**
