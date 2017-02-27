@@ -315,13 +315,13 @@ public class PowerDiagram {
 		
 		PowerDiagram diagram = new PowerDiagram();
 
-		//normal list based on an array
+		// normal list based on an array
 		OpenList sites = new OpenList();
 
 		Random rand = new Random(100);
-			//  create a root polygon which limits the voronoi diagram.
-		//  here it is just a rectangle.
-		 
+		// create a root polygon which limits the voronoi diagram.
+		// here it is just a rectangle.
+
 		PolygonSimple rootPolygon = new PolygonSimple();
 		int width = 1000;
 		int height = 1000;
@@ -329,7 +329,6 @@ public class PowerDiagram {
 		rootPolygon.add(width, 0);
 		rootPolygon.add(width, height);
 		rootPolygon.add(0, height);
-		
 		
 		// create 100 points (sites) and set random positions in the rectangle defined above.
 		for (int i = 0; i < 100; i++) {
