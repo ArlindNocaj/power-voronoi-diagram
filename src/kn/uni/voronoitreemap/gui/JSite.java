@@ -74,9 +74,9 @@ private static Random rand=new Random();
 					double x = point.getX()+dx;
 					double y = point.getY()+dy;
 					site.setXY(x, y);
-					}
-					PowerBox.powerBox.computeDiagram();
-					pressed=false;
+				}
+				PowerBox.powerBox.computeDiagram();
+				pressed=false;
 			}
 			
 			@Override
@@ -87,7 +87,6 @@ private static Random rand=new Random();
 				if (site.distance(new Site(currentX, currentY))<10){
 					pressed=true;
 				}
-				
 			}
 			
 			@Override
@@ -104,18 +103,25 @@ private static Random rand=new Random();
 			
 			@Override
 			public void mouseClicked(MouseEvent mouseEvent) {
-				 int modifiers = mouseEvent.getModifiers();
-			        if ((modifiers & InputEvent.BUTTON1_MASK) == InputEvent.BUTTON1_MASK) {
-			          System.out.println("Left button pressed.");
-			          	site.setWeight(Math.pow((Math.sqrt(site.getWeight())+10),2));
-			        }
-			        if ((modifiers & InputEvent.BUTTON2_MASK) == InputEvent.BUTTON2_MASK) {
-			          System.out.println("Middle button pressed.");
-			        }
-			        if ((modifiers & InputEvent.BUTTON3_MASK) == InputEvent.BUTTON3_MASK) {
-			        	site.setWeight(Math.pow((Math.sqrt(site.getWeight())-10),2));
-			        }
-			        
+				boolean changedWeight = false;
+				int modifiers = mouseEvent.getModifiers();
+				if ((modifiers & InputEvent.BUTTON1_MASK) == InputEvent.BUTTON1_MASK) {
+					System.out.println("Left button pressed.");
+					site.setWeight(Math.pow((Math.sqrt(site.getWeight())+10),2));
+					changedWeight = true;
+				}
+				if ((modifiers & InputEvent.BUTTON2_MASK) == InputEvent.BUTTON2_MASK) {
+					System.out.println("Middle button pressed.");
+				}
+				if ((modifiers & InputEvent.BUTTON3_MASK) == InputEvent.BUTTON3_MASK) {
+					System.out.println("Right button pressed.");
+					site.setWeight(Math.pow((Math.sqrt(site.getWeight())-10),2));
+					changedWeight = true;
+				}
+				if (changedWeight) {
+					PowerBox.powerBox.computeDiagram();
+					PowerBox.powerBox.repaint();
+				}
 			}
 		});
 	}

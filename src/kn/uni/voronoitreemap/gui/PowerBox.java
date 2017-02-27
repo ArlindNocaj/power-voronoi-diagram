@@ -18,6 +18,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D.Double;
@@ -65,12 +67,6 @@ public class PowerBox extends JFrame {
 		panel.addMouseListener(new MouseAdapter() {
 	
 			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				super.mousePressed(e);
-			
-			}
-			@Override
 			synchronized public void mouseClicked(MouseEvent e) {
 				
 				Point p = e.getPoint();
@@ -98,7 +94,7 @@ public class PowerBox extends JFrame {
 
 	public void computeDiagram() {
 		
-		
+
 		PowerDiagram diagram = new PowerDiagram(sites, clipPoly);
 		diagram.computeDiagram();
 		for(JSite component:points){
@@ -114,27 +110,31 @@ public class PowerBox extends JFrame {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new PowerBox();
+		PowerBox frame = new PowerBox();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	@Override
 	public void paint(Graphics g2) {
-		
-		// TODO Auto-generated method stub
 		super.paint(g2);
 //		paintComponents(g2);
+
 		Graphics2D g=(Graphics2D)g2;
 		g2.translate(2,22);
 		g.setColor(Color.red);
 		Site[] array = sites.array;
 		int size=sites.size;
+
+		// Draw sites
 		g2.setColor(Color.green);
 		for (int z=0;z<size;z++){
-		Site s = array[z];	
-		double posX=s.getX();
-		double posY=s.getY();
+			Site s = array[z];
+			double posX=s.getX();
+			double posY=s.getY();
 			double radius = Math.sqrt(s.getWeight());
+			// Draw a circle that reflects the weight
 			g.drawOval((int)posX-(int)radius, (int)posY-(int)radius, (int)(2*radius), (int)(2*radius));
+			// and a square around the site
 			int r2=5;
 			Color normal = g.getColor();
 			if(s.getPolygon()==null){
@@ -157,39 +157,42 @@ public class PowerBox extends JFrame {
 //		}
 //		}
 		
-		
+		// Draw Voronoi cells
+		g.setColor(Color.GRAY.brighter());
 		int i=0;
 		for (int z=0;z<size;z++){
-			g.setColor(Color.GRAY.brighter());
-		Site s = array[z];	
-				if (i!=-2){
+			Site s = array[z];
+			if (i!=-2){
 				PolygonSimple poly = s.getPolygon();
 				if (poly!=null){
-				g.draw(poly);
-				}
-				s.paint(g);
-				}
-			i++;
-	
-		}
-		
-		for (int z=0;z<size;z++){
-			Site s = array[z];	
-			double posX=s.getX();
-			double posY=s.getY();
-				double radius = Math.sqrt(s.getWeight());
-				
-				g.drawOval((int)posX-(int)radius, (int)posY-(int)radius, (int)(2*radius), (int)(2*radius));
-				int r2=7;
-				g.drawRect((int)posX-r2, (int)posY-r2, 2*r2, 2*r2);
-				PolygonSimple poly = s.getPolygon();
-				if (poly!=null){
-				Point2D center = poly.getCentroid();
-				r2=5;
-				g.setColor(Color.blue);
-				g.drawRect((int)center.getX()-r2, (int)center.getY()-r2, 2*r2, 2*r2);
+					g.draw(poly);
 				}
 			}
+			i++;
+		}
+		
+		// Draw sites and Voronoi cell centroids
+		g.setColor(Color.blue);
+		for (int z=0;z<size;z++){
+			Site s = array[z];
+			double posX=s.getX();
+			double posY=s.getY();
+			double radius = Math.sqrt(s.getWeight());
+
+			// Draw a circle that reflects the weight
+			g.drawOval((int)posX-(int)radius, (int)posY-(int)radius, (int)(2*radius), (int)(2*radius));
+			// and a square around the site
+			int r2=7;
+			g.drawRect((int)posX-r2, (int)posY-r2, 2*r2, 2*r2);
+
+			PolygonSimple poly = s.getPolygon();
+			// Draw the centroid of the Voronoi cell
+			if (poly!=null){
+				Point2D center = poly.getCentroid();
+				r2=5;
+				g.drawRect((int)center.getX()-r2, (int)center.getY()-r2, 2*r2, 2*r2);
+			}
+		}
 		
 		this.validate();
 	}
