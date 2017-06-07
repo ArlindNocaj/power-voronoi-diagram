@@ -1,7 +1,7 @@
 Java Power Voronoi Diagram
 =====================
 
-*Power Voronoi Diagram* is a fast standalone java library which computes a weighted Voronoi Diagram, called Power diagram.
+*Power Voronoi Diagram* is a fast standalone java (minimum 1.6) library which computes a weighted Voronoi Diagram, called Power diagram.
 
 (see <http://en.wikipedia.org/wiki/Power_diagram>)
 
