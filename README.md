@@ -61,6 +61,25 @@ for (int i=0;i<sites.size;i++){
 }
 ```
 
+maven (gradle sbt leiningen)
+-------------
+
+```xml
+<repositories>
+	<repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
+</repositories>
+
+<dependency>
+    <groupId>com.github.ArlindNocaj</groupId>
+    <artifactId>power-voronoi-diagram</artifactId>
+    <version>-SNAPSHOT</version>
+</dependency>
+```
+For more info (see <https://jitpack.io/#ArlindNocaj/power-voronoi-diagram>)
+
 License
 ------------------------
 
