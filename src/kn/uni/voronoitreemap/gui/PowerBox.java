@@ -26,11 +26,11 @@ import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import kn.uni.voronoitreemap.datastructure.OpenList;
 import kn.uni.voronoitreemap.diagram.PowerDiagram;
 import kn.uni.voronoitreemap.j2d.Point2D;
 import kn.uni.voronoitreemap.j2d.PolygonSimple;
@@ -45,8 +45,8 @@ import kn.uni.voronoitreemap.j2d.Site;
  *
  */
 public class PowerBox extends JFrame {
-	ArrayList<JSite> points=new ArrayList<JSite>();
-	OpenList sites=new OpenList();
+	List<JSite> points=new ArrayList<JSite>();
+	List<Site> sites=new ArrayList<Site>(10);
 	PolygonSimple clipPoly=new PolygonSimple();
 	
 	HashMap<Double, HashSet<Site>> vertices=new HashMap<Double, HashSet<Site>>();
@@ -122,25 +122,22 @@ public class PowerBox extends JFrame {
 		Graphics2D g=(Graphics2D)g2;
 		g2.translate(2,22);
 		g.setColor(Color.red);
-		Site[] array = sites.array;
-		int size=sites.size;
 
 		// Draw sites
 		g2.setColor(Color.green);
-		for (int z=0;z<size;z++){
-			Site s = array[z];
-			double posX=s.getX();
-			double posY=s.getY();
+		for (Site s : sites) {
+			double posX = s.getX();
+			double posY = s.getY();
 			double radius = Math.sqrt(s.getWeight());
 			// Draw a circle that reflects the weight
-			g.drawOval((int)posX-(int)radius, (int)posY-(int)radius, (int)(2*radius), (int)(2*radius));
+			g.drawOval((int) posX - (int) radius, (int) posY - (int) radius, (int) (2 * radius), (int) (2 * radius));
 			// and a square around the site
-			int r2=5;
+			int r2 = 5;
 			Color normal = g.getColor();
-			if(s.getPolygon()==null){
+			if (s.getPolygon() == null) {
 				g.setColor(Color.red);
 			}
-			g.drawRect((int)posX-r2, (int)posY-r2, 2*r2, 2*r2);
+			g.drawRect((int) posX - r2, (int) posY - r2, 2 * r2, 2 * r2);
 			g.setColor(normal);
 		}
 //		if (vertices!=null){
@@ -160,8 +157,7 @@ public class PowerBox extends JFrame {
 		// Draw Voronoi cells
 		g.setColor(Color.GRAY.brighter());
 		int i=0;
-		for (int z=0;z<size;z++){
-			Site s = array[z];
+		for (Site s : sites) {
 			if (i!=-2){
 				PolygonSimple poly = s.getPolygon();
 				if (poly!=null){
@@ -173,8 +169,7 @@ public class PowerBox extends JFrame {
 		
 		// Draw sites and Voronoi cell centroids
 		g.setColor(Color.blue);
-		for (int z=0;z<size;z++){
-			Site s = array[z];
+		for (Site s : sites) {
 			double posX=s.getX();
 			double posY=s.getY();
 			double radius = Math.sqrt(s.getWeight());

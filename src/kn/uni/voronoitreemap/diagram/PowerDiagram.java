@@ -18,6 +18,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -25,7 +26,6 @@ import kn.uni.voronoitreemap.convexHull.HEdge;
 import kn.uni.voronoitreemap.convexHull.JConvexHull;
 import kn.uni.voronoitreemap.convexHull.JFace;
 import kn.uni.voronoitreemap.convexHull.JVertex;
-import kn.uni.voronoitreemap.datastructure.OpenList;
 import kn.uni.voronoitreemap.debuge.ImageFrame;
 import kn.uni.voronoitreemap.j2d.Point2D;
 import kn.uni.voronoitreemap.j2d.PolygonSimple;
@@ -40,7 +40,6 @@ import kn.uni.voronoitreemap.j2d.Site;
  * 
  */
 public class PowerDiagram {
-
 	public static Random rand = new Random(99);
 	public static final int halfLineScalingFactor = 10000;
 	private static final double numericError = 1E-10;
@@ -49,7 +48,7 @@ public class PowerDiagram {
 	public static Graphics2D graphics;
 
 	protected JConvexHull hull = null;
-	protected OpenList sites;
+	protected List<Site> sites;
 	protected PolygonSimple clipPoly;
 	private int amountPolygons;
 	private Rectangle2D bb;
@@ -63,11 +62,11 @@ public class PowerDiagram {
 	Site s4;
 
 	public PowerDiagram() {
-		sites = null;
-		clipPoly = null;
+		this.sites = null;
+		this.clipPoly = null;
 	}
 
-	public PowerDiagram(OpenList sites, PolygonSimple clipPoly) {
+	public PowerDiagram(List<Site> sites, PolygonSimple clipPoly) {
 		setSites(sites);
 		setClipPoly(clipPoly);
 	}
@@ -77,7 +76,7 @@ public class PowerDiagram {
 	 * 
 	 * @see diagram.iPowerDiagram#setSites(datastructure.OpenList)
 	 */
-	public void setSites(OpenList sites) {
+	public void setSites(List<Site> sites) {
 		this.sites = sites;
 		hull = null;
 	}
@@ -116,14 +115,11 @@ public class PowerDiagram {
 	 */
 	public void computeDiagram() {
 
-		if (sites.size > 0) {
-			sites.permutate();
+		if (!sites.isEmpty()) {
+			Collections.shuffle(sites);
 
 			hull = new JConvexHull();
-			Site[] array = sites.array;
-			int size = sites.size;
-			for (int z = 0; z < size; z++) {
-				Site s = array[z];
+			for (Site s : sites) {
 				if (Double.isNaN(s.getWeight())){
 			
 //					s.setWeight(0.001);
@@ -316,7 +312,7 @@ public class PowerDiagram {
 		PowerDiagram diagram = new PowerDiagram();
 
 		// normal list based on an array
-		OpenList sites = new OpenList();
+		List<Site> sites = new ArrayList<Site>();
 
 		Random rand = new Random(100);
 		// create a root polygon which limits the voronoi diagram.
@@ -345,13 +341,9 @@ public class PowerDiagram {
 		
 		// do the computation
 		diagram.computeDiagram();
-		
-		// for each site we can no get the resulting polygon of its cell. 
-		// note that the cell can also be empty, in this case there is no polygon for the corresponding site.
-		for (int i=0;i<sites.size;i++){
-			Site site=sites.array[i];
-			PolygonSimple polygon=site.getPolygon();
-		}
+
+		// show the result
+		diagram.showDiagram();
 	}
 
 	public void showDiagram() {
@@ -361,10 +353,7 @@ public class PowerDiagram {
 		graphics.setColor(Color.blue);
 		// graphics.scale(1/10.0, 1/10.0);
 
-		Site[] array = sites.array;
-		int size = sites.size;
-		for (int z = 0; z < size; z++) {
-			Site s = array[z];
+		for (Site s : sites) {
 			s.paint(graphics);
 
 			PolygonSimple poly = s.getPolygon();
