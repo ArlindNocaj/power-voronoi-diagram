@@ -45,11 +45,11 @@ import kn.uni.voronoitreemap.j2d.Site;
  *
  */
 public class PowerBox extends JFrame {
-	List<JSite> points=new ArrayList<JSite>();
-	List<Site> sites=new ArrayList<Site>(10);
+	List<JSite> points= new ArrayList<>();
+	List<Site> sites= new ArrayList<>(10);
 	PolygonSimple clipPoly=new PolygonSimple();
 	
-	HashMap<Double, HashSet<Site>> vertices=new HashMap<Double, HashSet<Site>>();
+	HashMap<Double, HashSet<Site>> vertices= new HashMap<>();
 	public static PowerBox powerBox=null;
 	JPanel panel=new JPanel();
 	public PowerBox() {

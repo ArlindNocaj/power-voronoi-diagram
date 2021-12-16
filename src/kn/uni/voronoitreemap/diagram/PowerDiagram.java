@@ -180,10 +180,7 @@ public class PowerDiagram {
 		// v.setHandled(true);
 		// }
 
-		int facetCount = facets.size();
-		for (int i = 0; i < facetCount; i++) {
-			JFace facet = facets.get(i);
-
+		for (JFace facet : facets) {
 			if (facet.isVisibleFromBelow()) {
 
 				for (int e = 0; e < 3; e++) {
@@ -210,7 +207,7 @@ public class PowerDiagram {
 						double dy = 1;
 						for (JFace face : faces) {
 							Point2D point = face
-									.getDualPoint();
+							.getDualPoint();
 							double x1 = point.getX();
 							double y1 = point.getY();
 							if (!Double.isNaN(lastX)) {
@@ -230,13 +227,12 @@ public class PowerDiagram {
 								lastX = x1;
 								lastY = y1;
 							}
-
 						}
 						site.nonClippedPolyon = poly;
 
 						if (!site.isDummy) {
 //							try {
-								site.setPolygon(clipPoly.convexClip(poly));
+							site.setPolygon(clipPoly.convexClip(poly));
 
 //							} catch (Exception ex) {
 //
@@ -245,11 +241,9 @@ public class PowerDiagram {
 //								// TODO fallback for nonconvex clipping
 //							}
 						}
-
 					}
 				}
 			}
-
 		}
 	}
 
@@ -260,12 +254,12 @@ public class PowerDiagram {
 	 * @return
 	 */
 	private ArrayList<JFace> getFacesOfDestVertex(HEdge edge) {
-		ArrayList<JFace> faces = new ArrayList<JFace>();
+		ArrayList<JFace> faces = new ArrayList<>();
 		HEdge previous = edge;
 		JVertex first = edge.getDest();
 
 		Site site = (Site) first.originalObject;
-		ArrayList<Site> neighbours = new ArrayList<Site>();
+		ArrayList<Site> neighbours = new ArrayList<>();
 		do {
 			previous = previous.getTwin().getPrev();
 
@@ -312,7 +306,7 @@ public class PowerDiagram {
 		PowerDiagram diagram = new PowerDiagram();
 
 		// normal list based on an array
-		List<Site> sites = new ArrayList<Site>();
+		List<Site> sites = new ArrayList<>();
 
 		Random rand = new Random(100);
 		// create a root polygon which limits the voronoi diagram.

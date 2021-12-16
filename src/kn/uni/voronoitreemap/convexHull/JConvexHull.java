@@ -41,11 +41,11 @@ public class JConvexHull {
 	protected final Random rand = new Random(1985);
 	
 	public JConvexHull() {
-		points = new ArrayList<JVertex>();
-		facets = new ArrayList<JFace>();
-		created = new ArrayList<JFace>();
-		horizon = new ArrayList<HEdge>();
-		visible = new ArrayList<JFace>();
+		points = new ArrayList<>();
+		facets = new ArrayList<>();
+		created = new ArrayList<>();
+		horizon = new ArrayList<>();
+		visible = new ArrayList<>();
 		current = 0;
 	}
 	public void addPoint(JVertex v){
@@ -134,11 +134,11 @@ public class JConvexHull {
 	 */
 	private void addConflicts(JFace old1, JFace old2, JFace fn) {
 		//Adding the vertices
-		List<JVertex> l1 = new ArrayList<JVertex>();
+		List<JVertex> l1 = new ArrayList<>();
         old1.getList().getVertices(l1);
-		List<JVertex> l2 = new ArrayList<JVertex>();
+		List<JVertex> l2 = new ArrayList<>();
         old2.getList().getVertices(l2);
-		List<JVertex> nCL = new ArrayList<JVertex>();
+		List<JVertex> nCL = new ArrayList<>();
 		JVertex v1,v2;
 		int i,l;
 		i = l = 0;

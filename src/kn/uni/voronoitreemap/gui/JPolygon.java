@@ -73,8 +73,7 @@ public class JPolygon extends JComponent implements VoroCellObject {
 public void calculateFittingFont(){
 	if (polygon==null || text==null) return;
 		textFont=null;
-		new Thread(){
-		public void run(){
+		new Thread(() -> {
 			Font font = new Font("Serif", Font.BOLD, 5);
 		int fontSize = 5;
 		int w=0;
@@ -88,15 +87,15 @@ public void calculateFittingFont(){
     	   fontSize+=2;
     	   font = new Font("Serif", Font.PLAIN, fontSize);
         	FontMetrics fontMetrics = getFontMetrics(font);
-            
+
         	w = fontMetrics.stringWidth(text);
             h = fontMetrics.getHeight();
-          
+
             p1 = new Point2D(centroid.getX()-w/2,centroid.getY()-h/2);
             p2 = new Point2D(centroid.getX()-w/2,centroid.getY()+h/2);
             p3 = new Point2D(centroid.getX()+w/2,centroid.getY()-h/2);
             p4 = new Point2D(centroid.getX()+w/2,centroid.getY()+h/2);
-             
+
         }while(polygon.contains(p1)&& polygon.contains(p2) && polygon.contains(p3) && polygon.contains(p4));
 		if (fontSize-4>0){
 			if (makeFontSmaller){
@@ -110,11 +109,10 @@ public void calculateFittingFont(){
 				textFont=new Font("Serif", Font.BOLD, fontSize-4);
 				}
 				}
-			
-			
+
+
 		}
-		}
-		}.start();
+		}).start();
 	}
 	
 
