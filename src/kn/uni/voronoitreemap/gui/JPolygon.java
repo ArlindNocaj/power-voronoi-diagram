@@ -25,7 +25,6 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JComponent;
 
-import kn.uni.voronoitreemap.extension.VoroCellObject;
 import kn.uni.voronoitreemap.j2d.Point2D;
 import kn.uni.voronoitreemap.j2d.PolygonSimple;
 
@@ -37,7 +36,7 @@ import kn.uni.voronoitreemap.j2d.PolygonSimple;
  *
  */
 
-public class JPolygon extends JComponent implements VoroCellObject {
+public class JPolygon extends JComponent {
 	String text;
 	private Font textFont;
 	PolygonSimple polygon;
@@ -269,16 +268,5 @@ public class JPolygon extends JComponent implements VoroCellObject {
 //		polygon.setPolygon(p);
 //		frame.add(polygon);
 //		frame.setVisible(true);
-	}
-
-	@Override
-	public void doFinalWork() {
-		calculateFittingFont();
-//		repaint();
-	}
-
-	@Override
-	public void setVoroPolygon(PolygonSimple polygon) {
-		this.polygon=polygon;
 	}
 }
