@@ -28,8 +28,8 @@ public class JFace {
 	/**
 	 * Usefull
 	 */
-	 private JVertex v[];     // List of incident vertices
-	 private HEdge e[];       // Boundary edges of the facet
+	 private JVertex[] v;     // List of incident vertices
+	 private HEdge[] e;       // Boundary edges of the facet
 	 private JVector normal;
 	 private static final double epsilon = 1e-10;
 	 private int index;		  //Position in points list, important for fast update of conflicts.

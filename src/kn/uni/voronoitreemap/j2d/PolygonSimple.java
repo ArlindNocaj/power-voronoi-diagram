@@ -186,7 +186,7 @@ public class PolygonSimple implements Shape, Cloneable, Iterable<Point2D>{
 		return getPathIterator(at);
 	}
 
-	class PolygonPathIterator implements PathIterator {
+	static class PolygonPathIterator implements PathIterator {
 		PolygonSimple poly;
 		AffineTransform transform;
 		int index;

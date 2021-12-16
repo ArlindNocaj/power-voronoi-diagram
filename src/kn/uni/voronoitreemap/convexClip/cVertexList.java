@@ -16,7 +16,7 @@ import kn.uni.voronoitreemap.j2d.Point2D;
 
 
 public class cVertexList {
-	private double epsilon = 0.00000001;
+	private static final double epsilon = 0.00000001;
 	public int n;
 	public cVertex head;
 	public void InsertBeforeHead(cVertex vertex) {
@@ -49,9 +49,7 @@ public class cVertexList {
 		Point2D comp = head.prev.v;
 		if(abs(c.x,comp.x)< epsilon && abs(c.y,comp.y) < epsilon)
 			return true;
-		if(abs(c.x,head.v.x)< epsilon && abs(c.y,head.v.y) < epsilon)
-			return true;
-		return false;
+		return abs(c.x, head.v.x) < epsilon && abs(c.y, head.v.y) < epsilon;
 	}
 	public cVertexList copyList() {
 		cVertex temp1 = head, temp2;

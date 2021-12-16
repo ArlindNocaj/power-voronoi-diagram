@@ -147,11 +147,8 @@ private static Random rand=new Random();
 	@Override
 		public boolean contains(int x, int y) {
 			double distance = new kn.uni.voronoitreemap.j2d.Point2D(x+this.getLocation().x, y+this.getLocation().y).distance(site.getX(), site.getY());
-			if (distance<10){
-				return true;
-			}
-			return false;
-		}
+		return distance < 10;
+	}
 
 	@Override
 		public boolean contains(Point p) {

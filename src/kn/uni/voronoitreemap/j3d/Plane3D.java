@@ -67,8 +67,7 @@ protected double[] getNormZPlane(){
  */
 public Point2D getDualPointMappedToPlane(){
 	double[] nPlane = getNormZPlane();
-	Point2D dualPoint=new Point2D(nPlane[0]/2, nPlane[1]/2);
-	return dualPoint;
+	return new Point2D(nPlane[0] / 2, nPlane[1] / 2);
 }
 
 }

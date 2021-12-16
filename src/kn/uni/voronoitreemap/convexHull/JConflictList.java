@@ -37,12 +37,11 @@ public class JConflictList {
 			if(face){//Is FaceList
 				head.prevv = e;
 				e.nextv = head;
-				head = e;
 			}else{//Is VertexList
 				head.prevf = e;
 				e.nextf = head;
-				head = e;
 			}
+			head = e;
 		}
 	}
 
