@@ -73,7 +73,6 @@ public void setPolygon(PolygonSimple poly){
  * @see j2d.iSite#setNeighbours(java.util.ArrayList)
  */
 public void setNeighbours(ArrayList<Site> list){
-	this.setOldNeighbors(neighbours);
 	 neighbours=list;
  }
  
@@ -208,9 +207,5 @@ public double distance(Site point) {
 	double dy = y-point.getY();
 	return Math.sqrt(dx*dx+dy*dy);
 }
-
-private void setOldNeighbors(ArrayList<Site> oldNeighbors) {
-}
-
 
 }
