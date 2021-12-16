@@ -48,8 +48,7 @@ public class PowerBox extends JFrame {
 	List<JSite> points= new ArrayList<>();
 	List<Site> sites= new ArrayList<>(10);
 	PolygonSimple clipPoly=new PolygonSimple();
-	
-	HashMap<Double, HashSet<Site>> vertices= new HashMap<>();
+
 	public static PowerBox powerBox=null;
 	JPanel panel=new JPanel();
 	public PowerBox() {
@@ -82,7 +81,7 @@ public class PowerBox extends JFrame {
 //					computeDiagram();
 //					vertices = diagram.getVertices();
 					//lines = diagram.getLines();
-				}	
+				}
 			    PowerBox.powerBox.computeDiagram();
 				setPreferredSize(getSize());
 				repaint();

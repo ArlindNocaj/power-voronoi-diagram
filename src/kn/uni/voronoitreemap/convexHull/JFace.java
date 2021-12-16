@@ -92,12 +92,6 @@ public class JFace {
 		this.list = list;
 	}
 
-	public String toString() {
-//		String str = "[ " + v[0] + ", " + v[1] + ", " + v[2] + " ]";
-//		return str;
-		return super.toString();
-	}
-
 	public JVertex getVertex(int i) {
 		return v[i];
 	}

@@ -13,17 +13,13 @@
 package kn.uni.voronoitreemap.gui;
 
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -46,31 +42,19 @@ public class JPolygon extends JComponent implements VoroCellObject {
 	private Font textFont;
 	PolygonSimple polygon;
 	private boolean mouseIn=false;
-	private boolean isFinal;
 	private Integer id;
-	private boolean isLast=false;
 	private Color fillColor=new Color(255,255,255,0);
 	private int height=0;
 	private boolean makeFontSmaller=false;
-	
-	
-	public JPolygon(Integer id, String title){
-		this(id);
-		this.text=title;
-	}
+
 	public JPolygon(Integer id){
 		this.id=id;
 		polygon=null;
 		this.setOpaque(false);
 //		initListeners();
 	}
-	
-	public JPolygon(PolygonSimple polygon, Integer id){
-		this(id);
-		setPolygon(polygon);
-	}
-	
-public void calculateFittingFont(){
+
+	public void calculateFittingFont(){
 	if (polygon==null || text==null) return;
 		textFont=null;
 		new Thread(() -> {
@@ -116,9 +100,6 @@ public void calculateFittingFont(){
 	}
 	
 
-	public PolygonSimple getPolygon(){
-		return polygon;
-	}
 	private void initListeners() {
 		this.addMouseListener(new MouseListener() {
 			
@@ -293,51 +274,11 @@ public void calculateFittingFont(){
 	@Override
 	public void doFinalWork() {
 		calculateFittingFont();
-		isFinal=true;
 //		repaint();
 	}
 
-	
-	public void setVoroPolygon(PolygonSimple p, int height) {
-		p=(PolygonSimple)p.clone();
-		this.height=height;
-		isFinal=false;
-		Rectangle bounds = p.getBounds();
-//		if (height==2)
-//		p.shrinkForBorder(0.98);
-//		else if (height==3)
-//			p.shrinkForBorder(0.96);
-//		else{
-//			p.shrinkForBorder(0.95);
-//		}
-		this.polygon=p;
-		setLocation(bounds.x, bounds.y);
-
-		this.setSize(bounds.width, bounds.height);
-		this.setPreferredSize(new Dimension(bounds.width, bounds.height));
-//		repaint();
-	}
-	public void setIsLast(boolean isLast) {
-		this.isLast = isLast;
-	}
-	public boolean getisLast() {
-		return isLast;
-	}
-	public void setFillColor(Color fillColor) {
-		this.fillColor = fillColor;
-	}
-	
-	
-	public Color getFillColor() {
-		return fillColor;
-	}
-	
-	public void setMakeFontSmaller(boolean b) {
-		makeFontSmaller=b;
-	}
 	@Override
 	public void setVoroPolygon(PolygonSimple polygon) {
 		this.polygon=polygon;
-		
 	}
 }

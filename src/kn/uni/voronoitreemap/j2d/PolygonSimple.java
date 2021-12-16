@@ -25,7 +25,6 @@ import java.util.Random;
 import kn.uni.voronoitreemap.convexClip.ConvexClip;
 import kn.uni.voronoitreemap.convexClip.cVertex;
 import kn.uni.voronoitreemap.convexClip.cVertexList;
-import kn.uni.voronoitreemap.helper.Geometry;
 
 
 /**
@@ -34,12 +33,6 @@ import kn.uni.voronoitreemap.helper.Geometry;
  *
  */
 public class PolygonSimple implements Shape, Cloneable, Iterable<Point2D>{
-
-	/** 
-	 * Used for generation of a random point in a polygon.
-	 */
-	protected Random seed = new Random(5);
-
 	/**
 	 * centroid of the polygon is stored for faster access, once it is computed
 	 */
@@ -106,21 +99,7 @@ public class PolygonSimple implements Shape, Cloneable, Iterable<Point2D>{
 		this.y = Arrays.copyOf(yPoints, length);
 		this.length = length;
 	}
-	
-	
-	
-	/**
-	 * Replaces the pointers of the coordinate arrays to show to the given coordinate arrays.
-	 */
-	public void PolygonSimple(PolygonSimple simple) {
-		bounds = null;
-		centroid = null;
-		area = -1;
-		this.x = simple.x;
-		this.y = simple.y;
-		length = simple.length;
-	}
-	
+
 	/**
 	 * tests whether the given point is contained in the polygon (linear time).
 	 */
@@ -389,33 +368,6 @@ public class PolygonSimple implements Shape, Cloneable, Iterable<Point2D>{
 
 	}
 
-	/**
-	 * Scales all points by multiplying with the scalingFactor
-	 * 
-	 * @param scalingFactor
-	 */
-	public void scale(double scalingFactor) {
-		for (int i = 0; i < length; i++) {
-			x[i] = x[i] * scalingFactor;
-			y[i] = y[i] * scalingFactor;
-		}
-		clearCacheOnly();
-	}
-
-	/**
-	 * Translates all points of the polygon by adding the values
-	 * @param tx translation on x
-	 * @param ty translation on y
-	 */
-	public void translate(double tx, double ty) {
-		
-		for (int i = 0; i < length; i++) {
-			x[i] = x[i] + tx;
-			y[i] = y[i] + ty;
-		}
-		clearCacheOnly();
-	}
-
 	public void clearCacheOnly() {
 		this.centroid=null;
 		this.bounds=null;
@@ -453,8 +405,6 @@ public class PolygonSimple implements Shape, Cloneable, Iterable<Point2D>{
 		cVertexList list1 = this.getVertexList();
 		cVertexList list2 = poly.getVertexList();
 		ConvexClip clipper = new ConvexClip();
-//		list1.PrintVertices();
-//		list2.PrintVertices();
 		clipper.Start(list1, list2);
 		PolygonSimple res = new PolygonSimple();
 		if (clipper.inters != null && clipper.inters.n > 0) {
@@ -490,23 +440,6 @@ public class PolygonSimple implements Shape, Cloneable, Iterable<Point2D>{
 		return null;
 	}
 
-	/**
-	 * Debugging only
-	 * @param poly
-	 */
-	private Point2D containsPoly(PolygonSimple poly) {
-		boolean inside=true;
-			for(Point2D p:poly){
-				if(!this.contains(p)){
-					System.out.println(p);
-					inside=false;
-					return p;
-					
-				}
-			}
-			return null;
-	}
-
 	private cVertexList getVertexList() {
 		cVertexList list = new cVertexList();
 		for (int i = length - 1; i >= 0; i--) {
@@ -534,28 +467,6 @@ public class PolygonSimple implements Shape, Cloneable, Iterable<Point2D>{
 		area += (x[size] * y[0] - x[0] * y[size]);
 		this.area = Math.abs(area) * 0.5;
 		return this.area;
-	}
-	
-	/**
-	 * For the given point, the minimal distance to the segments of the polygon
-	 * is computed.
-	 * 
-	 * @param x
-	 * @param y
-	 * @return
-	 */
-	public double getMinDistanceToBorder(double x, double y) {
-		double result = Geometry.distancePointToSegment(this.x[length - 1],
-				this.y[length - 1], this.x[0], this.y[0], x, y);
-		for (int i = 0; i < (length - 1); i++) {
-			double distance = Geometry.distancePointToSegment(this.x[i],
-					this.y[i], this.x[i + 1], this.y[i + 1], x, y);
-			if (distance < result) {
-				result = distance;
-			}
-		}
-		return result;
-
 	}
 
 	/**
@@ -590,367 +501,6 @@ public class PolygonSimple implements Shape, Cloneable, Iterable<Point2D>{
 	}
 
 	/**
-	 * Default percentage can be 0.96
-	 * 
-	 * @param percentage
-	 */
-	public void shrinkForBorder(double percentage) {
-		oldPolygon = (PolygonSimple) this.clone();
-		getCentroid();
-		double cx = centroid.getX();
-		double cy = centroid.getY();
-		for (int i = 0; i < length; i++) {
-
-			double deltaX = x[i] - cx;
-			double deltaY = y[i] - cy;
-			double xnew = cx + deltaX * percentage;
-			double ynew = cy + deltaY * percentage;
-			x[i] = xnew;
-			y[i] = ynew;
-		}
-
-		// /**
-		// * Method where you use the angle bisector of three points to shrink
-		// it.
-		// */
-		// double[] xnew = new double[x.length];
-		// double[] ynew=new double[y.length];
-		//	
-		// Point2D p0=null;
-		// Point2D p1=new Point2D.Double(x[length-1], y[length-1]);
-		// Point2D p2=new Point2D.Double(x[0],y[0]);
-		// double borderWidth=10;
-		// for (int i=1;i<=length;i++){
-		//			
-		// p0=p1;
-		// p1=p2;
-		// if (i==length){
-		// p2=new Point2D.Double(x[0],y[0]);
-		// }else{
-		// p2=new Point2D.Double(x[i], y[i]);
-		// }
-		//			
-		// double endPointX =(p0.getX()+p2.getX())/2;
-		// double endPointY=(p0.getY()+p2.getY())/2;
-		// double deltaX=endPointX-p1.getX();
-		// double deltaY=endPointY-p1.getY();
-		//			
-		// double euclidLength = Math.sqrt(deltaX*deltaX+deltaY*deltaY);
-		//			
-		//			
-		// deltaX=deltaX/euclidLength;
-		// deltaY=deltaY/euclidLength;
-		//			
-		// deltaX=deltaX*borderWidth;
-		// deltaY=deltaY*borderWidth;
-		//			
-		// xnew[i-1]=p1.getX()+deltaX;
-		// ynew[i-1]=p1.getY()+deltaY;
-		// // }
-		//			
-		//		
-		// }
-		// // xnew[length]=xnew[0];
-		// // ynew[length]=ynew[0];
-		//		
-		// x=xnew;
-		// y=ynew;
-
-	}
-	/**
-	 * We get a vector which describes where the point should be relative to the
-	 * center. We change the length of the vector so that the point fits in the
-	 * polygon. (reimplementation needed here)
-	 * 
-	 * @return Point which is contained by this polygon and has same direction
-	 *         as the given vector point
-	 */
-	public Point2D getRelativePosition(Point2D vector) {
-
-		getCentroid();
-
-		double endPointX = centroid.getX() + vector.getX();
-		double endPointY = centroid.getY() + vector.getY();
-		Point2D endPoint = new Point2D(endPointX, endPointY);
-		if (contains(endPointX, endPointY)) {
-			return new Point2D(endPointX, endPointY);
-		} else {
-			double endPointX2 = centroid.getX() + vector.getX() * 0.85;
-			double endPointY2 = centroid.getY() + vector.getY() * 0.85;
-			if (contains(endPointX2, endPointY2)) {
-				return new Point2D(endPointX2, endPointY2);
-			}
-		}
-		Point2D p1 = null;
-		Point2D p2 = new Point2D(x[0], y[0]);
-		Point2D result = null;
-		for (int i = 1; i <= length; i++) {
-
-			p1 = p2;
-			//TODO Keine Ahnung ob richtig
-			if(i == length){
-				p2 = new Point2D(0,0);
-			}else{
-				p2 = new Point2D(x[i], y[i]);
-			}
-			Point2D intersection = getIntersection(p1, p2, centroid, endPoint);
-			if (intersection != null) {
-
-				double deltaX = intersection.getX() - centroid.getX();
-				double deltaY = intersection.getY() - centroid.getY();
-				double e = intersection.distance(centroid);
-				double minimalDistanceToBorder = 10;
-				double alpha = (e - minimalDistanceToBorder) / e;
-				if (contains(centroid)) {
-					// make vector smaller
-					result = new Point2D(centroid.getX() + deltaX * 0.8,
-							centroid.getY() + deltaY * 0.8);
-				} else {
-					// make vector longer
-					result = new Point2D(centroid.getX() + deltaX * 1.1,
-							centroid.getY() + deltaY * ((1 - alpha) + 1));
-				}
-				if (contains(result)) {
-					return result;
-				}
-
-			}
-		}
-		if (result != null && contains(result))
-			return result;
-		else {
-			// System.out.println("Innerpoint");
-
-			return getInnerPoint();
-
-		}
-	}
-
-	/**
-	 * We get a vector which describes where the point should be relative to the
-	 * center. We change the length of the vector so that the point fits in the
-	 * polygon. alpha is the percentage of the point when considering the line
-	 * to the border.
-	 * 
-	 * @return Point which is contained by this polygon and has same direction
-	 *         as the given vector point
-	 */
-	final private Point2D getRelativePosition(Point2D vector, double alphaLine) {
-
-		double dx = vector.getX();
-		double dy = vector.getY();
-
-		getCentroid();
-		double centroidX = centroid.getX();
-		double centroidY = centroid.getY();
-
-		double endPointX = centroidX + dx;
-		double endPointY = centroidY + dy;
-		Point2D endPoint = new Point2D(endPointX, endPointY);
-
-		Point2D p1 = null;
-		Point2D p2 = new Point2D(x[0], y[0]);
-		Point2D result = null;
-		for (int i = 1; i <= length; i++) {
-
-			p1 = p2;
-			p2 = new Point2D(x[i], y[i]);
-			Point2D intersection = getIntersectionOfSegmentAndLine(p1, p2,
-					centroid, endPoint);
-			if (intersection != null) {
-
-				double deltaX = intersection.getX() - centroidX;
-				double deltaY = intersection.getY() - centroidY;
-				double e = intersection.distance(centroid);
-				double nX = centroidX + deltaX * alphaLine;
-				double nY = centroidY + deltaY * alphaLine;
-				return new Point2D(nX, nY);
-			}
-		}
-		System.out.println("Problem, relative Placement did not go right.");
-		return null;
-
-	}
-
-	/**
-	 * Returns a random point in the polygon.
-	 * @return
-	 */
-	public Point2D getInnerPoint() {
-		Rectangle b = getBounds();
-		double x = -1;
-		double y = -1;
-		do {
-			x = b.getMinX() + seed.nextDouble()*b.width;
-
-			y = b.getMinY() + seed.nextDouble()*b.height;
-		} while (!this.contains(x, y));
-
-		return new Point2D(x, y);
-	}
-
-	/**
-	 * Computes the intersection point iff (inx,iny) is within the polygon and (outx,outy) is outside of the polygon.
-	 * Returns null if the is no intersection or the line crosses the complete polygon.
-	 * @param inx x-coordinate of the presumably inner point
-	 * @param iny y-coordiante of the presumably inner point
-	 * @param outx x-coordinate of the presumably outer point
-	 * @param outy y-coordinate of the presumably outer point
-	 * @return Intersection Point
-	 */
-	public Point2D getIntersectionWithPolygon(Double inx, Double iny, Double outx, Double outy){
-		double t,s,denum;
-		Point2D[] intersections = new Point2D[4];
-		int k = 0;
-		for(int i = 0, j = length - 1; i < length; j = i++){
-			denum = ((x[i] - x[j])*(iny - outy) - (inx - outx) *(y[i] - y[j]));
-			if(denum == 0)
-				continue;
-			t = (outx*(y[i] - y[j]) - outy * (x[i] - x[j]) + y[j] * (x[i] - x[j]) - x[j]* (y[i] - y[j]))/denum;
-			s = (outy* (inx - outx) + x[j] *(iny - outy)  - outx * (iny - outy) - y[j] *(inx - outx))/-denum;
-			if(t > 0 && t <= 1 && s > 0 && s <= 1)
-				intersections[k++] = new Point2D(outx + t*(inx - outx), outy + t*(iny - outy));
-		}
-		if(k > 1)
-			return null;
-		else
-			return intersections[0];
-		
-	}
-	
-	/**
-	 * intersection of two lines formed by the given points:
-	 * http://paulbourke.net/geometry/lineline2d/
-	 * 
-	 * @param p1
-	 * @param p2
-	 * @param p3
-	 * @param p4
-	 * @return
-	 */
-	private Point2D getIntersection(Point2D p1, Point2D p2, Point2D p3,
-			Point2D p4) {
-	
-		// Bounding Box test
-		double x1 = 0;
-		double x2 = 0;
-		double y1 = 0;
-		double y2 = 0;
-
-		double x3 = 0;
-		double x4 = 0;
-		double y3 = 0;
-		double y4 = 0;
-
-		if (p1.getX() < p2.getX()) {
-			x1 = p1.getX();
-			x2 = p2.getX();
-		} else {
-			x1 = p2.getX();
-			x2 = p1.getX();
-		}
-		if (p1.getY() < p2.getY()) {
-			y1 = p1.getY();
-			y2 = p2.getY();
-		} else {
-			y1 = p2.getY();
-			y2 = p1.getY();
-		}
-
-		if (p3.getX() < p4.getX()) {
-			x3 = p3.getX();
-			x4 = p4.getX();
-		} else {
-			x3 = p4.getX();
-			x4 = p3.getX();
-		}
-		if (p3.getY() < p4.getY()) {
-			y3 = p3.getY();
-			y4 = p4.getY();
-		} else {
-			y3 = p4.getY();
-			y4 = p3.getY();
-		}
-
-		//FIXME bounding box intersection needs to be corrected
-		if (!(x2 >= x2 && x4 >= x1 && y2 >= y3 && y4 >= y1)) {
-			return null;
-		}
-
-		Point2D n1 = new Point2D(p3.getX() - p1.getX(), p3.getY()
-				- p1.getY());
-		Point2D n2 = new Point2D(p2.getX() - p1.getX(), p2.getY()
-				- p1.getY());
-		Point2D n3 = new Point2D(p4.getX() - p1.getX(), p4.getY()
-				- p1.getY());
-		Point2D n4 = new Point2D(p2.getX() - p1.getX(), p2.getY()
-				- p1.getY());
-
-		if (Geometry.crossProduct(n1, n2) * Geometry.crossProduct(n3, n4) >= 0) {
-			return null;
-		}
-
-		double denominator = (p4.getY() - p3.getY()) * (p2.getX() - p1.getX())
-				- (p4.getX() - p3.getX()) * (p2.getY() - p1.getY());
-		if (denominator == 0) {
-			// return null;
-			throw new RuntimeException("Lines are parallel");
-		}
-		double ua = (p4.getX() - p3.getX()) * (p1.getY() - p3.getY())
-				- (p4.getY() - p3.getY()) * (p1.getX() - p3.getX());
-		double ub = (p2.getX() - p1.getX()) * (p1.getY() - p3.getY())
-				- (p2.getY() - p1.getY()) * (p1.getX() - p3.getX());
-		ua = ua / denominator;
-		ub = ub / denominator;
-
-		if ((ua >= 0 && ua <= 1) && (ub >= 0 && ub <= 1)) {
-			return new Point2D(p1.getX() + ua * (p2.getX() - p1.getX()),
-					p1.getY() + ua * (p2.getY() - p1.getY()));
-		} else {
-			// no intersection of the two segments
-			return null;
-		}
-
-	}
-
-	/**
-	 * Return the intersection of the segment given bei p1 and p2 and the line
-	 * given by p3 and p4. intersection:
-	 * http://paulbourke.net/geometry/lineline2d/
-	 * 
-	 * @param p1
-	 * @param p2
-	 * @param p3
-	 * @param p4
-	 * @return
-	 */
-	private static Point2D getIntersectionOfSegmentAndLine(Point2D p1,
-			Point2D p2, Point2D p3, Point2D p4) {
-		
-		double denominator = (p4.getY() - p3.getY()) * (p2.getX() - p1.getX())
-				- (p4.getX() - p3.getX()) * (p2.getY() - p1.getY());
-		if (denominator == 0) {
-			// return null;
-			throw new RuntimeException("Lines are parallel");
-		}
-		double ua = (p4.getX() - p3.getX()) * (p1.getY() - p3.getY())
-				- (p4.getY() - p3.getY()) * (p1.getX() - p3.getX());
-		double ub = (p2.getX() - p1.getX()) * (p1.getY() - p3.getY())
-				- (p2.getY() - p1.getY()) * (p1.getX() - p3.getX());
-		ua = ua / denominator;
-		ub = ub / denominator;
-
-		if ((ua >= 0 && ua <= 1) && ub >= 1) {
-			return new Point2D(p1.getX() + ua * (p2.getX() - p1.getX()),
-					p1.getY() + ua * (p2.getY() - p1.getY()));
-		} else {
-			// no intersection of the two segments
-			return null;
-		}
-
-	}
-	
-	/**
 	 * Array with x-values of the polygon points.
 	 * @return 
 	 */
@@ -964,14 +514,6 @@ public class PolygonSimple implements Shape, Cloneable, Iterable<Point2D>{
 	 */
 	public double[] getYPoints() {
 		return y;
-	}
-	
-	/**
-	 * If the polygon is modified by e.g. shrinking, this method returns the original polygon. If the polyogn was not modified, it can return null.
-	 * @return
-	 */
-	public PolygonSimple getOriginalPolygon() {
-		return oldPolygon;
 	}
 
 	@Override
@@ -998,24 +540,4 @@ public class PolygonSimple implements Shape, Cloneable, Iterable<Point2D>{
 			
 		};
 	}
-	
-	
-
-	public int[] getXpointsClosed(){
-		return getPointsClosed(x);
-	}
-	
-	public int[] getYpointsClosed(){
-		return getPointsClosed(y);
-	}
-	
-	private int[] getPointsClosed(double[] values){		
-		int[] x=new int[length+1];
-		for (int i = 0; i < length; i++) 
-			x[i]=(int)values[i];		
-		x[length]=x[0];
-		return x;
-	}
-
-	
 }

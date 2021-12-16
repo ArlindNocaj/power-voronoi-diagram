@@ -26,8 +26,7 @@ public class JVertex {
 	private static final double epsilon = 1e-10;
 	private JConflictList list;
 	private int index;
-	private boolean handled;
-	
+
 	public Object originalObject;
 	public JVertex(double x, double y, double z) {
 		list = new JConflictList(false);
@@ -104,13 +103,7 @@ public class JVertex {
 	public String toString() {
 		return "" + x +"/" + y + "/" +z;
 	}
-	public void setHandled(boolean b) {
-		this.handled=b;
-	}
-	public boolean isHandled() {
-		return handled;
-	}
-	
+
 	public Point3d toPoint3D(){
 		return new Point3d(x,y,z);
 	}
@@ -126,6 +119,5 @@ public class JVertex {
 	public void clear(){
 		list = new JConflictList(false);
 		index = -1;
-		handled=false;
 	}
 }

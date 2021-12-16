@@ -27,7 +27,7 @@ import kn.uni.voronoitreemap.extension.VoroCellObject;
  * @author Arlind Nocaj
  *
  */
-public class ASite extends JVertex implements Comparable<Site>, iSite {
+public class ASite extends JVertex implements Comparable<Site> {
  protected static final double nearlyZero = 1E-10;
 protected double weight=nearlyZero;
  protected double percentage=nearlyZero;
@@ -35,15 +35,8 @@ protected double weight=nearlyZero;
  protected PolygonSimple polygon;
  public PolygonSimple nonClippedPolyon;
  protected ArrayList<Site> neighbours;
- 
- public VoroCellObject cellObject;
- /**
-  * Preflow Extrapolation
-  */
- public Point2D preflowVector=new Point2D();
-private ArrayList<Site> oldNeighbors;
- 
- /**
+
+	/**
   * 
   * @param x
   * @param y
@@ -199,21 +192,6 @@ public void paint(Graphics2D g){
 	
 }
 
-
-
-/* (non-Javadoc)
- * @see j2d.iSite#setPercentage(double)
- */
-public void setPercentage(double percentage) {
-	this.percentage = percentage;
-}
-/* (non-Javadoc)
- * @see j2d.iSite#getPercentage()
- */
-public double getPercentage() {
-	return percentage;
-}
-
 /* (non-Javadoc)
  * @see j2d.iSite#getPoint()
  */
@@ -232,24 +210,8 @@ public double distance(Site point) {
 	return Math.sqrt(dx*dx+dy*dy);
 }
 
-public double distanceCircles(Site point){
-	double dx = x-point.getX();
-	double dy = y-point.getY();
-	double radius1 = Math.sqrt(weight);
-	double radius2=Math.sqrt(point.weight);
-	return Math.sqrt(dx*dx+dy*dy)-radius1-radius2;
-}
-
-
-public ArrayList<Site> getOldNeighbors() {
-	return oldNeighbors;
-}
-
-
 private void setOldNeighbors(ArrayList<Site> oldNeighbors) {
-	this.oldNeighbors = oldNeighbors;
 }
-
 
 
 }
