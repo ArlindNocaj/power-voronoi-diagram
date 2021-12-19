@@ -18,6 +18,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -25,7 +26,6 @@ import kn.uni.voronoitreemap.convexHull.HEdge;
 import kn.uni.voronoitreemap.convexHull.JConvexHull;
 import kn.uni.voronoitreemap.convexHull.JFace;
 import kn.uni.voronoitreemap.convexHull.JVertex;
-import kn.uni.voronoitreemap.datastructure.OpenList;
 import kn.uni.voronoitreemap.debuge.ImageFrame;
 import kn.uni.voronoitreemap.j2d.Point2D;
 import kn.uni.voronoitreemap.j2d.PolygonSimple;
@@ -40,8 +40,6 @@ import kn.uni.voronoitreemap.j2d.Site;
  * 
  */
 public class PowerDiagram {
-
-	public static Random rand = new Random(99);
 	public static final int halfLineScalingFactor = 10000;
 	private static final double numericError = 1E-10;
 	public static boolean debug = true;
@@ -49,10 +47,8 @@ public class PowerDiagram {
 	public static Graphics2D graphics;
 
 	protected JConvexHull hull = null;
-	protected OpenList sites;
+	protected List<Site> sites;
 	protected PolygonSimple clipPoly;
-	private int amountPolygons;
-	private Rectangle2D bb;
 	protected List<JFace> facets = null;
 
 	// set of sites which forms a rectangle that is big enough to bound a
@@ -63,11 +59,11 @@ public class PowerDiagram {
 	Site s4;
 
 	public PowerDiagram() {
-		sites = null;
-		clipPoly = null;
+		this.sites = null;
+		this.clipPoly = null;
 	}
 
-	public PowerDiagram(OpenList sites, PolygonSimple clipPoly) {
+	public PowerDiagram(List<Site> sites, PolygonSimple clipPoly) {
 		setSites(sites);
 		setClipPoly(clipPoly);
 	}
@@ -77,14 +73,14 @@ public class PowerDiagram {
 	 * 
 	 * @see diagram.iPowerDiagram#setSites(datastructure.OpenList)
 	 */
-	public void setSites(OpenList sites) {
+	public void setSites(List<Site> sites) {
 		this.sites = sites;
 		hull = null;
 	}
 
 	public void setClipPoly(PolygonSimple polygon) {
 		clipPoly = polygon;
-		bb = polygon.getBounds2D();
+		Rectangle2D bb = polygon.getBounds2D();
 		// create sites on a rectangle which is big enough to not create
 		// bisectors which intersect the clippingPolygon
 		double minX = bb.getMinX();
@@ -116,14 +112,11 @@ public class PowerDiagram {
 	 */
 	public void computeDiagram() {
 
-		if (sites.size > 0) {
-			sites.permutate();
+		if (!sites.isEmpty()) {
+			Collections.shuffle(sites);
 
 			hull = new JConvexHull();
-			Site[] array = sites.array;
-			int size = sites.size;
-			for (int z = 0; z < size; z++) {
-				Site s = array[z];
+			for (Site s : sites) {
 				if (Double.isNaN(s.getWeight())){
 			
 //					s.setWeight(0.001);
@@ -173,21 +166,8 @@ public class PowerDiagram {
 		// invisible to not do it several times
 		int vertexCount = hull.getVertexCount();
 		boolean[] verticesVisited = new boolean[vertexCount];
-		// for (int i = 0; i < vertexCount; i++) {
-		//
-		// JVertex v = hull.getVertex(i);
-		//
-		// Site site = (Site) v;
-		// site.setPolygon(null);
-		// site.setNeighbours(null);
-		//
-		// v.setHandled(true);
-		// }
 
-		int facetCount = facets.size();
-		for (int i = 0; i < facetCount; i++) {
-			JFace facet = facets.get(i);
-
+		for (JFace facet : facets) {
 			if (facet.isVisibleFromBelow()) {
 
 				for (int e = 0; e < 3; e++) {
@@ -214,7 +194,7 @@ public class PowerDiagram {
 						double dy = 1;
 						for (JFace face : faces) {
 							Point2D point = face
-									.getDualPoint();
+							.getDualPoint();
 							double x1 = point.getX();
 							double y1 = point.getY();
 							if (!Double.isNaN(lastX)) {
@@ -234,13 +214,12 @@ public class PowerDiagram {
 								lastX = x1;
 								lastY = y1;
 							}
-
 						}
 						site.nonClippedPolyon = poly;
 
 						if (!site.isDummy) {
 //							try {
-								site.setPolygon(clipPoly.convexClip(poly));
+							site.setPolygon(clipPoly.convexClip(poly));
 
 //							} catch (Exception ex) {
 //
@@ -249,11 +228,9 @@ public class PowerDiagram {
 //								// TODO fallback for nonconvex clipping
 //							}
 						}
-
 					}
 				}
 			}
-
 		}
 	}
 
@@ -264,12 +241,12 @@ public class PowerDiagram {
 	 * @return
 	 */
 	private ArrayList<JFace> getFacesOfDestVertex(HEdge edge) {
-		ArrayList<JFace> faces = new ArrayList<JFace>();
+		ArrayList<JFace> faces = new ArrayList<>();
 		HEdge previous = edge;
 		JVertex first = edge.getDest();
 
 		Site site = (Site) first.originalObject;
-		ArrayList<Site> neighbours = new ArrayList<Site>();
+		ArrayList<Site> neighbours = new ArrayList<>();
 		do {
 			previous = previous.getTwin().getPrev();
 
@@ -290,14 +267,6 @@ public class PowerDiagram {
 	}
 
 	
-	public void setAmountPolygons(int amountPolygons) {
-		this.amountPolygons = amountPolygons;
-	}
-
-	public int getAmountPolygons() {
-		return amountPolygons;
-	}
-
 	public static void initDebug() {
 //		if (graphics == null) {
 			BufferedImage image = new BufferedImage(2000, 2000,
@@ -316,7 +285,7 @@ public class PowerDiagram {
 		PowerDiagram diagram = new PowerDiagram();
 
 		// normal list based on an array
-		OpenList sites = new OpenList();
+		List<Site> sites = new ArrayList<>();
 
 		Random rand = new Random(100);
 		// create a root polygon which limits the voronoi diagram.
@@ -345,13 +314,9 @@ public class PowerDiagram {
 		
 		// do the computation
 		diagram.computeDiagram();
-		
-		// for each site we can no get the resulting polygon of its cell. 
-		// note that the cell can also be empty, in this case there is no polygon for the corresponding site.
-		for (int i=0;i<sites.size;i++){
-			Site site=sites.array[i];
-			PolygonSimple polygon=site.getPolygon();
-		}
+
+		// show the result
+		diagram.showDiagram();
 	}
 
 	public void showDiagram() {
@@ -361,10 +326,7 @@ public class PowerDiagram {
 		graphics.setColor(Color.blue);
 		// graphics.scale(1/10.0, 1/10.0);
 
-		Site[] array = sites.array;
-		int size = sites.size;
-		for (int z = 0; z < size; z++) {
-			Site s = array[z];
+		for (Site s : sites) {
 			s.paint(graphics);
 
 			PolygonSimple poly = s.getPolygon();
@@ -375,34 +337,5 @@ public class PowerDiagram {
 			}
 		}
 		frame.repaint();
-		// draw(s1);
-		// draw(s2);
-		// draw(s3);
-		// draw(s4);
-
-		// ArrayList<HLine> lines = this.getLines();
-		// for (HLine line : lines) {
-		// line.paint(graphics);
-		// }
-		// HashMap<Point2D.Double, HashSet<Site>> vertices = getVertices();
-		// for (Point2D.Double p:vertices.keySet()){
-		// System.out.println("Vertex:"+p);
-		// graphics.setColor(Color.pink);
-		// int radius = (int)Math.sqrt(3);
-		// graphics.drawOval((int)p.getX()-20, (int)p.getY()-20, 2*20, 2*20);
-		//
-		// }
-
-	}
-
-	public void draw(Site s) {
-		s.paint(graphics);
-
-		PolygonSimple poly = s.getPolygon();
-		if (poly != null) {
-			graphics.draw(poly);
-		} else {
-			System.out.println("Poly null of:" + s);
-		}
 	}
 }

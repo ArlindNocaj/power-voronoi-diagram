@@ -118,10 +118,8 @@ public class TestHull{
 			
 		List<JFace> erg = hull.compute();
 		long endTime=System.currentTimeMillis();
-		
-		long delta = endTime-startTime;
-		double time=delta;
-		System.out.println(time);
+
+			System.out.println((double) (endTime - startTime));
 		}
 //		convexHull.JConvexHull hull2 = new convexHull.JConvexHull();
 //		

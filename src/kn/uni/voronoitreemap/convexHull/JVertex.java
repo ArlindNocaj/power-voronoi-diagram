@@ -26,8 +26,7 @@ public class JVertex {
 	private static final double epsilon = 1e-10;
 	private JConflictList list;
 	private int index;
-	private boolean handled;
-	
+
 	public Object originalObject;
 	public JVertex(double x, double y, double z) {
 		list = new JConflictList(false);
@@ -53,9 +52,7 @@ public class JVertex {
 			return false;
 		else {
 			JVertex obj = (JVertex) o;
-			if(obj.x == x && obj.y == y && obj.z == z)
-				return true;
-			else return false;
+			return obj.x == x && obj.y == y && obj.z == z;
 		}
 	}
 	/**
@@ -69,26 +66,17 @@ public class JVertex {
 				if(z == 0 && v.z == 0) {
 					return true;
 				}
-				if(z == 0 || v.y == 0) {
-					return false;
-				}
-				return true;
+				return z != 0 && v.y != 0;
 			}
 			if(y == 0 || v.y == 0) {
 				return false;
 			}
-			if(z/y >= v.z/v.y -epsilon  && z/y <= v.z/v.y +epsilon)
-				return true;
-			else 
-				return false;
+			return z / y >= v.z / v.y - epsilon && z / y <= v.z / v.y + epsilon;
 		}
 		if(x == 0 || v.x == 0) {
 			return false;
 		}
-		if(y/x <= v.y/v.x+epsilon && y/x >= v.y/v.x-epsilon &&  z/x >= v.y/v.x -epsilon  && z/x <= v.z/v.x +epsilon)
-			return true;
-		else 
-			return false;
+		return y / x <= v.y / v.x + epsilon && y / x >= v.y / v.x - epsilon && z / x >= v.y / v.x - epsilon && z / x <= v.z / v.x + epsilon;
 	}
 	public void negate(){
 		x *= -1;
@@ -104,13 +92,7 @@ public class JVertex {
 	public String toString() {
 		return "" + x +"/" + y + "/" +z;
 	}
-	public void setHandled(boolean b) {
-		this.handled=b;
-	}
-	public boolean isHandled() {
-		return handled;
-	}
-	
+
 	public Point3d toPoint3D(){
 		return new Point3d(x,y,z);
 	}
@@ -126,6 +108,5 @@ public class JVertex {
 	public void clear(){
 		list = new JConflictList(false);
 		index = -1;
-		handled=false;
 	}
 }
